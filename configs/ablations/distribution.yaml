@@ -1,0 +1,16 @@
+﻿# =============================================================================
+# Ablation: Data distribution comparison
+# Purpose: Train/eval on cluster/grid/mixed vs uniform data
+# =============================================================================
+
+experiment_id: "ablation_distribution"
+
+dataset:
+  data_size: 10240
+  val_size: 2048
+  distribution: "cluster"    # compare: uniform | cluster | grid | mixed
+
+training:
+  method: rollout
+  baseline: rollout
+  epochs: 100

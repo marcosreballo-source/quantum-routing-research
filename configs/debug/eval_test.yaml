@@ -1,0 +1,5 @@
+﻿experiment_id: "debug_eval_test"
+
+evaluation:
+  n_samples: 2
+  eval_size: 20

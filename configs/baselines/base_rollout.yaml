@@ -1,0 +1,28 @@
+﻿experiment_id: "baseline_rollout"
+
+problem:
+  n_nodes: 20 # (10, 20, 50, 100)
+
+dataset:
+  data_size: 768000      # training
+  val_size: 10000        # validation
+
+model:
+  hidden_node_dim: 128
+  hidden_edge_dim: 16
+  conv_layers: 4
+
+training:
+  method: rollout # (ppo, rollout)
+  lr: 1.0e-3
+  batch_size: 512
+  epochs: 100
+  lr_decay: 0.96         # corresponds to LambdaLR(... 0.96 ** epoch)
+
+evaluation:
+  n_samples: 1280
+  eval_size: 1000
+  temperatures:
+    21: 2.5
+    51: 1.8
+    101: 1.2

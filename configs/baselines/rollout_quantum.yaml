@@ -1,0 +1,32 @@
+﻿experiment_id: "baseline_rollout_quantum"
+
+# Quantum Rollout Training Configuration
+# Purpose: Scenario #4 — Rollout baseline (REINFORCE) with quantum encoder
+
+problem:
+  n_nodes: 10
+
+training:
+  method: rollout
+  lr: 1.0e-3
+  lr_decay: 0.96
+
+dataset:
+  data_size: 32
+  val_size: 16
+
+model:
+  hidden_node_dim: 64
+  conv_layers: 1
+
+quantum:
+  enabled: true
+  n_qubits_actor: 4
+  n_layers_quantum_actor: 1
+  encoder:
+    fc_node: true
+    fc_edge: false
+    gat_layers: [0]
+
+mlflow:
+  experiment_prefix: "Rollout_Quantum"

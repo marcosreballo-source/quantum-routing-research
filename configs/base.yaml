@@ -1,0 +1,190 @@
+# =============================================================================
+# Unified Base Configuration — QGAT Merged
+# =============================================================================
+# This config serves as the default for ALL training methods (PPO, Rollout).
+# Experiment-specific configs inherit from this and override what they need.
+# =============================================================================
+
+# ===== EXECUTION MODE =====
+# Controls verbosity, profiling, device, and quantum overrides.
+# Options: debug | classical | hybrid_cpu | hybrid_gpu | production
+# - debug:      verbose=2, profiler=on, device=auto
+# - classical:  verbose=0, force_classical=true (ignores quantum settings), device=auto
+# - hybrid_cpu: verbose=1, device=cpu
+# - hybrid_gpu: verbose=1, device=gpu (DEFAULT)
+# - production: verbose=0, profiler=off, device=gpu
+mode: hybrid_gpu
+
+problem:
+  n_nodes: 20  # (10, 20, 50, 100)
+
+dataset:
+  data_size: 512000   # training
+  val_size: 10000     # validation
+  distribution: "uniform"  # uniform | cluster | grid | mixed
+
+model:
+  hidden_node_dim: 128
+  hidden_edge_dim: 16
+  conv_layers: 4
+  use_ffn: false               # FFN after each GAT layer (KOOL-style)
+  normalization: "batch"       # batch | layer | none
+  tanh_clipping: 10.0          # logit clipping in decoder attention
+  pool_behavior: "static"      # static | iterative_legacy
+                               # static: Pool computed ONCE before loop (Lei Eq 3.8-3.9, DEFAULT)
+                               # iterative_legacy: Pool reatributed each step (historical, ablation only)
+
+training:
+  method: ppo          # (ppo, rollout)
+  policy_mode: sampling # (sampling, greedy) — used by PPO
+  lr: 3.0e-4
+  batch_size: 512
+  epochs: 100
+  timestep: 1
+  ppo_epoch: 1
+  entropy_value: 0.01
+  eps_clip: 0.2
+  lr_decay: 1.0        # LambdaLR decay per epoch (1.0 = no decay)
+  baseline: null        # null | rollout | exponential | critic | none
+                        # null = auto (PPO→critic, Rollout→rollout)
+  bl_warmup_epochs: 1   # warmup epochs for rollout baseline (0 = no warmup)
+  bl_alpha: 0.05         # p-value threshold for rollout baseline t-test update
+  exp_beta: 0.8          # EMA decay factor for exponential baseline
+  lr_critic: null        # separate LR for critic baseline (null = use training.lr)
+  rollout_baseline_quantum: true  # false = classical-only baseline (ablation)
+
+  # Loss weights (Paper Eq 23): L(θ,ϕ) = λp·LCLIP(θ) + λv·LMSE(ϕ) − λe·LE(θ)
+  # LEGACY DEFAULTS - OPTIMIZABLE: tune via ablation configs
+  loss_weights:
+    policy: 1.0          # λp: actor policy loss weight
+    value: 0.5           # λv: critic MSE loss weight [LEGACY DEFAULT]
+    entropy: 0.01        # λe: entropy regularization [LEGACY DEFAULT]
+
+evaluation:
+  enabled: false            # false = skip post-training evaluation entirely
+  modes:                   # list of modes to run (remove entries to skip)
+    - greedy               # deterministic argmax decoding
+    - sampling             # stochastic best-of-N (THE bottleneck: eval_size × n_samples)
+    # - beam               # beam search (only for rollout models, enable via beam_width > 0)
+  n_samples: 1280
+  eval_size: 1000
+  beam_width: 0            # 0 = disabled; 10 or 20 = typical beam search width
+  temperatures:
+    21: 2.5
+    51: 1.8
+    101: 1.2
+
+# ===== MLflow =====
+mlflow:
+  tracking_uri: null          # null = MLFLOW_TRACKING_URI env var or auto-detect
+  experiment_prefix: "DRL_Lei"
+  # Database backend (replaces file-based mlruns/)
+  # Options:
+  #   null                    → legacy file-based (mlruns/ directory)
+  #   "sqlite"                → SQLite at .mlflow/mlruns.db (recommended for local dev)
+  #   "postgresql://user:pass@host:5432/mlflow" → PostgreSQL (recommended for shared/cloud)
+  backend_store: 
+  # Where to store artifacts (models, plots, etc.)
+  # null = default (./mlruns/ for file-based, ./mlflow-artifacts/ for DB)
+  artifact_root: null
+
+# ===== SAGEMAKER =====
+sagemaker:
+  project: "bqc"               # project name for job naming
+  squad: "qgat"                # squad name for job naming
+  # Job name format: {project}-{squad}-YYYYMMDD-HHMM-{data_size}-{val_size}
+
+# ===== HARDWARE =====
+hardware:
+  use_gpu: auto               # auto | true | false
+  num_workers: auto
+  pin_memory: auto
+
+# ===== REPRODUCIBILITY SEEDS =====
+seeds:
+  data_seed: 42
+  model_seed: 42
+
+
+# ===== DROPOUT REGULARIZATION =====
+# All rates default to 0.0 (original behaviour). Recommended: 0.05-0.2.
+dropout:
+  gat: 0.0
+  attn: 0.0
+  attn_output: 0.0
+  decoder: 0.0
+  critic: 0.0
+
+# ===== TEMPERATURE ANNEALING =====
+# Schedules: constant | linear | exponential
+temperature:
+  initial: 2.5
+  final: 2.5
+  schedule: "constant"
+  decay_rate: 1.0
+
+# ===== QUANTUM CONFIGURATION =====
+# Granular per-component AND per-layer quantum selection.
+# Each component can be individually enabled/disabled.
+# gat_layers / critic_layers are lists of layer INDICES that should be quantum.
+# An empty list = all classical for that component.
+quantum:
+  enabled: false               # master switch
+
+  # Ansatz configuration
+  rotation: "RYRZ"             # gate sequence per qubit per layer: RY | RYRZ | RXRYRZ
+  topology: "ring"             # entanglement: ring | brickwall | chain | lambda
+
+  # Number of qubits / quantum layers
+  n_qubits_actor: 4
+  n_qubits_critic: 4
+  n_layers_quantum_actor: 4
+  n_layers_quantum_critic: 4
+
+  # Per-component quantum selection
+  encoder:
+    fc_node: false             # quantum Linear for node projection
+    fc_edge: false             # quantum Linear for edge projection
+    gat_layers: []             # list of GAT layer indices to make quantum in fc transform, e.g. [0, 1]
+    gat_attn_layers: []        # list of GAT layer indices to make quantum in attention (ablation)
+
+  critic:
+    enabled: false
+    layers: []                 # list of critic decoder layer indices, e.g. [0, 1, 2]
+    type: "shared_conv1d"      # shared_conv1d | shared_fc | own_encoder_conv1d | own_encoder_mlp
+                               #   shared_conv1d:      3×Conv1d, uses actor encoder (Lei 2020, DEFAULT)
+                               #   shared_fc:           3×Linear, uses actor encoder (ablation)
+                               #   own_encoder_conv1d:  own Q-GAT encoder + Conv1d decoder (Giang 2024 Fig 1a)
+                               #   own_encoder_mlp:     own Q-GAT encoder + MLP value head (Kool 2019)
+    # Own-encoder quantum config (only used when type=own_encoder_conv1d or own_encoder_mlp):
+    encoder:
+      fc_node: false
+      fc_edge: false
+      gat_layers: []
+      gat_attn_layers: []
+  
+  actor_decoder:              # actor PtrNet (Decoder1.fc / fc1) — NOT the critic decoder
+    fc: false                  # quantum Linear for decoder context projection
+    fc1: false                 # quantum Linear for decoder pool projection
+    n_qubits: 4
+    n_layers: 4
+
+#  actor_decoder:
+#   enabled: false             # reserved for future use
+
+  # PennyLane backend device
+  # Options: lightning.gpu | lightning.qubit | lightning.kokkos | default.qubit
+  # lightning.gpu  → CUDA-accelerated statevector sim (BEST for GPU)
+  # lightning.qubit → fast C++ CPU statevector sim
+  # lightning.kokkos → multi-GPU / HPC (requires pennylane-lightning-kokkos)
+  # default.qubit  → pure-Python/JAX sim (supports backprop diff_method)
+  backend: "lightning.qubit" 
+
+  # Differentiation method for quantum gradients
+  # Options: best | adjoint | backprop | parameter-shift | finite-diff
+  # best           → PennyLane auto-selects optimal method for the backend
+  # adjoint        → reverse-mode via unitary adjoint (fast, lightning backends only)
+  # backprop       → classical backpropagation through sim (fast, default.qubit only)
+  # parameter-shift → analytic shift rule (hardware-compatible, slower)
+  # finite-diff    → numerical finite differences (universal fallback, slowest)
+  diff_method: "best"

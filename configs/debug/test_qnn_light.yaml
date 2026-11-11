@@ -1,0 +1,35 @@
+﻿experiment_id: "debug_qnn_light"
+
+# Light Quantum Neural Network Configuration
+# Purpose: Fast validation (5-10 minutes) of quantum pipeline
+# Migrated from baseline_aws_QGAT — converted to unified quantum config format
+
+problem:
+  n_nodes: 20
+
+dataset:
+  data_size: 100
+  val_size: 20
+
+quantum:
+  enabled: true
+  n_qubits_actor: 4
+  n_qubits_critic: 4
+  n_layers_quantum_actor: 4
+  n_layers_quantum_critic: 2
+  encoder:
+    fc_node: true
+    fc_edge: false
+    gat_layers: [0, 1, 2]
+  critic:
+    layers: [0, 1, 2]
+
+training:
+  lr: 3.0e-4
+  batch_size: 4
+  epochs: 5
+  timestep: 1
+  ppo_epoch: 1
+
+mlflow:
+  experiment_prefix: "QNN_Light"

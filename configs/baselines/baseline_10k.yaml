@@ -1,0 +1,8 @@
+﻿experiment_id: "baseline_10k"
+
+dataset:
+  data_size: 10000      # training
+  val_size: 10000        # validation
+
+training:
+  batch_size: 100

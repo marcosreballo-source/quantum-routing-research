@@ -1,0 +1,17 @@
+﻿# =============================================================================
+# Ablation: REINFORCE baselines comparison
+# Purpose: Test rollout vs exponential vs no baseline
+# Usage: Override training.baseline with: rollout | exponential | none
+# =============================================================================
+
+experiment_id: "ablation_baselines"
+
+training:
+  method: rollout
+  baseline: exponential    # change to: rollout | none | exponential
+  bl_warmup_epochs: 0
+  lr_decay: 0.99
+
+dataset:
+  data_size: 10240
+  val_size: 2048

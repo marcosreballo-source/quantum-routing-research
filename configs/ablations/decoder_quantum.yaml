@@ -1,0 +1,31 @@
+﻿# =============================================================================
+# Ablation: Decoder quantum layers
+# Purpose: Test quantum fc/fc1 in the decoder (VRP_Actor Decoder1)
+# =============================================================================
+
+experiment_id: "ablation_decoder_quantum"
+
+quantum:
+  enabled: true
+  rotation: "RYRZ"
+  topology: "ring"
+  n_qubits_actor: 4
+  n_layers_quantum_actor: 4
+  encoder:
+    fc_node: true
+    fc_edge: false
+    gat_layers: [0, 1, 2]
+  actor_decoder:
+    fc: true                  # quantum context projection
+    fc1: false                # classical pool projection
+    n_qubits: 4
+    n_layers: 4
+
+dataset:
+  data_size: 1024
+  val_size: 256
+
+training:
+  method: rollout
+  baseline: rollout
+  epochs: 50

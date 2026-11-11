@@ -1,0 +1,8 @@
+﻿# Loss weight ablation: low entropy (λe=0.001) — less exploration
+experiment_id: "ablation_loss_entropy_low"
+
+training:
+  loss_weights:
+    policy: 1.0
+    value: 0.5
+    entropy: 0.001   # Decreased from LEGACY DEFAULT 0.01

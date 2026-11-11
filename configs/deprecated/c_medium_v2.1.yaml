@@ -1,0 +1,28 @@
+# Medium Quantum v2 Configuration
+# Purpose: Convergence validation with full encoder + critic quantum
+# Migrated from baseline_aws_QGAT q_medium_v2.yaml
+mode: debug
+
+problem:
+  n_nodes: 20
+
+dataset:
+  data_size: 100
+  val_size: 20
+  distribution: "uniform"
+
+model:
+  hidden_edge_dim: 64
+  conv_layers: 4
+
+
+training:
+  lr: 3.0e-4
+  batch_size: 32
+  epochs: 100
+  timestep: 1
+  ppo_epoch: 1
+
+mlflow:
+  experiment_prefix: "Classic_Mediumv2"
+

@@ -1,0 +1,85 @@
+# =============================================================================
+# GIANG ET AL. (2025) — Q-GAT DRL FOR VRP — EXACT PAPER CONFIG
+# =============================================================================
+# Reference: "Vehicle Routing Problems via Quantum Graph Attention Network
+#             Deep Reinforcement Learning" (Giang et al., 2025)
+#
+# This config replicates the paper architecture as closely as possible.
+# Use as baseline for ablation studies and paper conformance.
+# =============================================================================
+
+experiment_id: "phase0_giang_original"
+
+mode: debug
+
+problem:
+  n_nodes: 20                  # Paper evaluates m ∈ {20, 50, 100}
+
+dataset:
+  data_size: 10240
+  val_size: 2048
+  distribution: "uniform"
+
+model:
+  hidden_node_dim: 128
+  hidden_edge_dim: 16
+  conv_layers: 4
+  use_ffn: false
+  normalization: "batch"
+  tanh_clipping: 10.0
+  pool_behavior: "static"     # Paper-correct (Lei Eq 3.8-3.9)
+
+training:
+  method: ppo
+  policy_mode: sampling
+  lr: 1.0e-4                   # Paper: 1e-4
+  batch_size: 256              # Paper: 256
+  epochs: 100                  # Paper: 100
+  timestep: 1
+  ppo_epoch: 1
+  entropy_value: 0.01
+  eps_clip: 0.2
+  lr_decay: 0.96
+
+  loss_weights:
+    policy: 1.0
+    value: 0.5
+    entropy: 0.01
+
+quantum:
+  enabled: true
+
+ 
+
+  encoder:
+    fc_node: true              # Quantum projection for node features
+    fc_edge: true
+    gat_layers: []  # Quantum on ALL GAT layers
+    gat_attn_layers: [0,1,2,3]  # Quantum on ALL GAT attention layers
+
+  critic:
+    enabled: true
+    type: "own_encoder_conv1d"   # Giang 2024 Fig 1(a): own Q-GAT encoder + 1D-Conv decoder
+    layers: []                 # Classical Conv1d decoder (no quantum on decoder layers)
+    encoder:                   # Critic's own encoder — mirrors actor encoder config
+      fc_node: true
+      fc_edge: true
+      gat_layers: []  # Quantum on ALL encoder GAT layers (same as actor)
+      gat_attn_layers: [0,1,2,3]  # Quantum on ALL encoder GAT attention layers
+
+  backend: "default.qubit"
+  diff_method: "backprop"
+
+dropout:
+  gat: 0.0
+  attn: 0.0
+  attn_output: 0.0
+  decoder: 0.0
+  critic: 0.0
+
+temperature:
+  initial: 2.5
+  final: 2.5
+  schedule: "constant"
+  decay_rate: 1.0
+

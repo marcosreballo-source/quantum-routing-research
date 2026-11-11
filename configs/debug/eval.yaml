@@ -1,0 +1,9 @@
+﻿experiment_id: "debug_eval"
+
+evaluation:
+  n_samples: 1280
+  eval_size: 1000
+  temperatures:
+    21: 2.5
+    51: 1.8
+    101: 1.2

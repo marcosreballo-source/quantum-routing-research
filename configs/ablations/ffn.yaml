@@ -1,0 +1,15 @@
+﻿# =============================================================================
+# Ablation: FFN enabled with layer normalization (Rollout baseline)
+# Purpose: Test KOOL-style FFN + LayerNorm after GAT layers
+# =============================================================================
+
+experiment_id: "ablation_ffn"
+
+model:
+  use_ffn: true
+  normalization: "layer"
+
+training:
+  method: rollout
+  baseline: rollout
+  bl_warmup_epochs: 1

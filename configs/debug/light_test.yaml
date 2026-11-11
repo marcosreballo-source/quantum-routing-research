@@ -1,0 +1,19 @@
+﻿experiment_id: "debug_light_test"
+
+dataset:
+  data_size: 100      # training
+  val_size: 100        # validation
+
+training:
+  batch_size: 10
+  epochs: 2
+
+evaluation:
+  n_samples: 2
+  eval_size: 20
+
+# ===== SAGEMAKER =====
+sagemaker:
+  project: "bqc"               # project name for job naming
+  squad: "qgat"                # squad name for job naming
+  # Job name format: {project}-{squad}-YYYYMMDD-HHMM-{data_size}-{val_size}

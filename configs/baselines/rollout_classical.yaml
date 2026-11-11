@@ -1,0 +1,16 @@
+﻿experiment_id: "baseline_rollout_classical"
+
+# Classical Rollout Training Configuration
+# Purpose: Scenario #3 — Rollout baseline (REINFORCE) without quantum
+
+training:
+  method: rollout
+  lr: 1.0e-3
+  lr_decay: 0.96
+
+dataset:
+  data_size: 100
+  val_size: 20
+
+mlflow:
+  experiment_prefix: "Rollout_Classical"

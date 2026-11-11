@@ -1,0 +1,14 @@
+﻿# =============================================================================
+# Ablation: Beam search evaluation
+# Purpose: Compare greedy vs sampling vs beam search at eval time
+# =============================================================================
+
+experiment_id: "ablation_beam"
+
+evaluation:
+  beam_width: 10
+  n_samples: 1280
+  eval_size: 1000
+
+training:
+  method: rollout

@@ -1,0 +1,5 @@
+﻿experiment_id: "baseline_10k_rollout"
+
+dataset:
+  data_size: 10240      # training
+  val_size: 2048        # validation

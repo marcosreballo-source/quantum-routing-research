@@ -1,0 +1,60 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "q-gat-tests"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "matplotlib>=3.10.8",
+    "mlflow>=3.10.0",
+    "numpy>=2.4.2",
+    "plotly>=6.6.0",
+    "pyyaml>=6.0.3",
+    "scikit-learn>=1.8.0",
+    "scipy>=1.17.1",
+    "torch>=2.10.0",
+    "torch-geometric>=2.7.0",
+    "tqdm>=4.67.3",
+]
+
+[project.optional-dependencies]
+quantum = [
+    "pennylane>=0.36.0",
+    "pennylane-lightning",
+]
+quantum-gpu = [
+    "pennylane>=0.36.0",
+    "PennyLane-Lightning-GPU",
+    "pennylane-qiskit>=0.36.0",
+    "jax[cuda]>=0.4.20",
+    "jaxlib>=0.4.20",
+    "cuquantum-python",
+]
+aws = [
+    "sagemaker",
+    "boto3",
+    "requests",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+markers = [
+    "slow: marks tests that take a long time to run",
+    "quantum: marks tests requiring PennyLane quantum layers",
+    "infra: marks infrastructure tests (SageMaker, SLURM)",
+    "scenario: marks end-to-end integration scenario tests",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0",
+    "pytest-cov>=5.0",
+]

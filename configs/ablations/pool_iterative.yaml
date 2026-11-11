@@ -1,0 +1,13 @@
+﻿# =============================================================================
+# POOL BEHAVIOR ABLATION — LEGACY ITERATIVE vs STATIC
+# =============================================================================
+# Compare iterative_legacy (historical, accumulative fc1(fc1(...))) against
+# the default static pool (paper-correct, Lei Eq 3.8-3.9).
+#
+# Run this WITH base.yaml to see the impact of pool mutation.
+# =============================================================================
+
+experiment_id: "ablation_pool_iterative"
+
+model:
+  pool_behavior: "iterative_legacy"  # LEGACY: pool reatributed each step

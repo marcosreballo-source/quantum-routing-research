@@ -1,0 +1,79 @@
+# Test: baseline=null (auto-resolve to critic) + ppo + quantum
+# Expected job name: bqc-qgat-ppo-critic-sc-Qring-RYRZ
+
+experiment_id: "test_baseline_null_ppo_quantum"
+mode: debug
+
+problem:
+  n_nodes: 20
+
+dataset:
+  data_size: 1024
+  val_size: 256
+  distribution: "uniform"
+
+model:
+  hidden_node_dim: 128
+  hidden_edge_dim: 16
+  conv_layers: 4
+  use_ffn: false
+  normalization: "batch"
+  tanh_clipping: 10.0
+  pool_behavior: "static"
+
+training:
+  method: ppo
+  policy_mode: sampling
+  lr: 1.0e-4
+  batch_size: 256
+  epochs: 100
+  timestep: 1
+  ppo_epoch: 1
+  entropy_value: 0.01
+  eps_clip: 0.2
+  lr_decay: 0.96
+  baseline: null  # ← AUTO-RESOLVE: ppo + null → "critic"
+
+  loss_weights:
+    policy: 1.0
+    value: 0.5
+    entropy: 0.01
+
+quantum:
+  enabled: true
+  rotation: "RYRZ"
+  topology: "ring"
+  n_qubits_actor: 4
+  n_layers_quantum_actor: 4
+  
+  encoder:
+    fc_node: false
+    fc_edge: false
+    gat_layers: []
+    gat_attn_layers: []
+
+  critic:
+    enabled: false
+    type: "shared_conv1d"  # ← default, should show as "sc"
+    layers: []
+    encoder:
+      fc_node: false
+      fc_edge: false
+      gat_layers: []
+      gat_attn_layers: []
+  
+  backend: "default.qubit"
+  diff_method: "backprop"
+
+dropout:
+  gat: 0.0
+  attn: 0.0
+  attn_output: 0.0
+  decoder: 0.0
+  critic: 0.0
+
+temperature:
+  initial: 2.5
+  final: 2.5
+  schedule: "constant"
+  decay_rate: 1.0

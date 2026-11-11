@@ -1,0 +1,8 @@
+﻿# Loss weight ablation: high value loss weight (λv=1.0)
+experiment_id: "ablation_loss_value_high"
+
+training:
+  loss_weights:
+    policy: 1.0
+    value: 1.0       # Increased from LEGACY DEFAULT 0.5
+    entropy: 0.01

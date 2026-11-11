@@ -1,0 +1,18 @@
+# Dependencies for AWS SageMaker container.
+# PyTorch and CUDA are pre-installed in the base container.
+torch-geometric
+numpy>=1.24,<2
+pyyaml
+mlflow
+matplotlib
+scikit-learn
+scipy
+tqdm
+requests
+# Quantum computing support (optional)
+pennylane>=0.36.0
+pennylane-qiskit>=0.36.0
+jax[cuda]>=0.4.20
+jaxlib>=0.4.20
+PennyLane-Lightning-GPU
+cuquantum-python

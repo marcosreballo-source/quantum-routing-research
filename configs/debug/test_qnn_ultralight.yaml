@@ -1,0 +1,41 @@
+﻿experiment_id: "debug_qnn_ultralight"
+
+# Ultra-Fast Quantum Neural Network Configuration
+# Purpose: Quick sanity check (1-2 minutes) of quantum pipeline on local PC
+# Overrides base.yaml
+
+mode: hybrid_cpu
+
+problem:
+  n_nodes: 10
+
+dataset:
+  data_size: 20
+  val_size: 5
+
+model:
+  hidden_node_dim: 64
+  hidden_edge_dim: 32
+  conv_layers: 1
+
+quantum:
+  enabled: true
+  n_qubits_actor: 4
+  n_qubits_critic: 4
+  n_layers_quantum_actor: 1
+  n_layers_quantum_critic: 1
+  encoder:
+    fc_node: true
+    fc_edge: false
+    gat_layers: [0]
+  critic:
+    layers: [0]
+
+training:
+  lr: 3.0e-4
+  batch_size: 4
+  epochs: 1
+  ppo_epoch: 1
+
+mlflow:
+  experiment_prefix: "QNN_UltraLight"

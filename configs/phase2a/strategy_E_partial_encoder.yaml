@@ -1,0 +1,84 @@
+# =============================================================================
+# PHASE 2a — STRATEGY E: Partial Encoder (Only GAT Layer 0 Quantum)
+# =============================================================================
+#
+# Architecture:
+#   Encoder:    [Q] [C] [C] [C]   ← ONLY first GAT layer quantum
+#   Actor Dec:  [C] [C] [C]       ← classical Pointer Network
+#   Critic:     [C] [C] [C]       ← classical Conv1D
+#
+# Change vs Strategy A: gat_layers=[0] instead of [0,1,2,3]
+# Tests whether quantum on early layers alone is sufficient.
+# Expected to be the FASTEST strategy.
+# =============================================================================
+
+experiment_id: "phase2a_strategyE"
+
+mode: debug
+
+problem:
+  n_nodes: 10
+
+dataset:
+  data_size: 512
+  val_size: 128
+  distribution: "uniform"
+
+model:
+  hidden_node_dim: 128
+  hidden_edge_dim: 16
+  conv_layers: 4
+  use_ffn: false
+  normalization: "batch"
+  tanh_clipping: 10.0
+  pool_behavior: "static"
+
+training:
+  method: ppo
+  policy_mode: sampling
+  lr: 1.0e-4
+  batch_size: 32
+  epochs: 5
+  timestep: 1
+  ppo_epoch: 1
+  entropy_value: 0.01
+  eps_clip: 0.2
+  lr_decay: 1.0
+  loss_weights:
+    policy: 1.0
+    value: 0.5
+    entropy: 0.01
+
+evaluation:
+  n_samples: 128
+  eval_size: 128
+  beam_width: 0
+
+quantum:
+  enabled: true
+  rotation: "RYRZ"
+  topology: "ring"
+  n_qubits_actor: 4
+  n_qubits_critic: 4
+  n_layers_quantum_actor: 4
+  n_layers_quantum_critic: 2
+  backend: "lightning.qubit"
+
+  encoder:
+    fc_node: true
+    fc_edge: false
+    gat_layers: [0]                # ← ONLY layer 0 quantum
+
+  critic:
+    enabled: true
+    type: "shared_conv1d"
+    layers: []
+
+  actor_decoder:
+    fc: false
+    fc1: false
+    n_qubits: 4
+    n_layers: 4
+
+mlflow:
+  experiment_prefix: "Phase2a_Ablation"

@@ -1,0 +1,11 @@
+﻿experiment_id: "baseline_1k_val"
+
+dataset:
+  data_size: 10240      # training
+  val_size: 2048        # validation
+
+model:
+  hidden_edge_dim: 64
+
+training:
+  batch_size: 512
