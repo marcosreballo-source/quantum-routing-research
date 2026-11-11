@@ -1,4 +1,4 @@
-# Lançamento do QGAT no SageMaker com o smlaunch (https://github.com/<usuario>/sagemaker-training-launcher).
+# Lançamento do QGAT no SageMaker com o smlaunch (https://github.com/marcosreballo-source/sagemaker-training-launcher).
 #   smlaunch launch --var config=configs/baselines/baseline_10k.yaml
 #   smlaunch launch --dry-run --var config=configs/ablations/ansatz.yaml
 

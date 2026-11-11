@@ -7,7 +7,7 @@ Este repositório reúne os projetos de P&D em roteamento de veículos que desen
 | [`qgat/`](qgat/) | **QGAT**: Graph Attention com camadas quânticas híbridas, treinado por RL (PPO e REINFORCE) para CVRP | Um único entry point para local, Slurm e AWS SageMaker; MLflow; 49 configs de ablação; pytest |
 | [`qaoa-multiobjective/`](qaoa-multiobjective/) | **QAOA multiobjetivo** para TSP e VRP | Formulações QUBO multiobjetivo, execuções em hardware IBM, hipervolume da fronteira de Pareto |
 
-O dataset desses modelos foi coletado com o [delivery-graph-collector](../delivery-graph-collector), que mede tempos de trajeto reais via Google Routes API com orçamento controlado. <!-- TODO: trocar pelo link do GitHub -->
+O dataset desses modelos foi coletado com o [delivery-graph-collector](https://github.com/marcosreballo-source/delivery-graph-collector), que mede tempos de trajeto reais via Google Routes API com orçamento controlado.
 
 ## Publicações
 
