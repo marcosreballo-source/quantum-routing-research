@@ -1,6 +1,6 @@
 # QAOA multiobjetivo para problemas de roteamento
 
-Este é o código do paper **"Quantum Approximate Multi-Objective Optimization in Routing Problems"**. Os autores são E. W. Lussi, A. P. Fumaco, **M. V. Reballo**, J. C. L. Neto, F. A. C. de Barros e E. I. Duzzioni, do Instituto Eldorado, da UFSC e da Quantuloop. O texto foi preparado no formato IOP. <!-- TODO: status (submetido / aceito / arXiv) + link -->
+Este é o código do paper **"Quantum Approximate Multi-Objective Optimization in Routing Problems"**, publicado em [arXiv:2610.00168](https://arxiv.org/abs/2610.00168) em 2026. Os autores são E. W. Lussi, A. P. Fumaco, **M. V. Reballo**, J. C. Libois Neto, F. A. C. de Barros e E. I. Duzzioni, do Instituto Eldorado, da UFSC e da Quantuloop.
 
 ## O problema
 

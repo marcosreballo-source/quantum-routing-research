@@ -4,6 +4,8 @@ Este é um framework de treino e experimentação para **Graph Attention com cam
 
 Foi desenvolvido no Instituto Eldorado, num projeto de P&D em otimização de rotas. O projeto foi descontinuado e o código é publicado aqui com autorização.
 
+> **Paper:** RITT, M. R. P.; DA ROSA JÚNIOR, A. S.; **REBALLO, M. V.**; DO AMARAL, C. A.; DE BARROS, F. A. C. *A hybrid quantum-classical neural network for learning to route*. [arXiv:2609.00489](https://arxiv.org/abs/2609.00489), 2026. Submetido ao CBCTQ 2026.
+
 ## O que este repo mostra
 
 - **Um ponto de entrada para três ambientes.** `main.py` recebe `configs/base.yaml` mais um YAML de experimento. Slurm (`scripts/*.sbatch`) e SageMaker (`sagemaker_entry.py`) chamam a mesma CLI.
