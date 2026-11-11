@@ -7,7 +7,7 @@ Foi desenvolvido no Instituto Eldorado, num projeto de P&D em otimização de ro
 ## O que este repo mostra
 
 - **Um ponto de entrada para três ambientes.** `main.py` recebe `configs/base.yaml` mais um YAML de experimento. Slurm (`scripts/*.sbatch`) e SageMaker (`sagemaker_entry.py`) chamam a mesma CLI.
-- **Lançamento padronizado na AWS.** `launch_sagemaker.py` sobe o Training Job e espera ele terminar. Depois baixa o `model.tar.gz` do S3 e importa os runs no MLflow local. `check_aws_status.py` e `check_billing.py` acompanham o status dos jobs e o custo.
+- **Lançamento padronizado na AWS com o [smlaunch](../../sagemaker-training-launcher).** <!-- TODO: link do GitHub --> Eu extraí esse framework deste projeto. O `smlaunch.yaml` descreve o job, o preflight roda `validate_config.py` antes de qualquer gasto e o hook `smlaunch_naming.py` codifica método, baseline, critic e topologia quântica no nome do job. No fim, o smlaunch baixa os checkpoints e importa os runs no MLflow local. Os scripts `launch_sagemaker.py`, `sagemaker_entry.py` e `check_*.py` são a primeira versão desse pipeline e ficaram como histórico.
 - **Experimentos versionados por configuração.** São 49 YAMLs de baseline, ablação e debug. Eles cobrem ansatz, decoder quântico, FFN, pesos de loss, beam search e distribuição de instâncias. `scripts/generate_ablation_yamls.py` e `submit_ablation_batch.py` geram e submetem essas baterias.
 - **Modelo híbrido clássico-quântico.** `src/DRL_Lei/quantum_layers.py` e o ansatz PCE (`ansatz/pce.py`) usam PennyLane. O mesmo modelo pode rodar em modo `--mode classical` para servir de baseline.
 - **Testes.** Os testes com pytest cobrem configuração, dados, modelos, camadas quânticas, MLflow, infraestrutura e cenários ponta a ponta. Eles usam os markers `quantum`, `infra` e `scenario`.
@@ -20,7 +20,7 @@ flowchart LR
     T -->|rollout| R["VRP_Rollout_train"]
     P & R --> Q["Encoder GAT<br/>+ camadas quânticas (PennyLane)"]
     M --> ML[("MLflow")]
-    L["launch_sagemaker.py"] -->|"Training Job"| SM["SageMaker<br/>sagemaker_entry.py → main.py"]
+    L["smlaunch launch<br/>(preflight: validate_config.py)"] -->|"Training Job"| SM["SageMaker<br/>_smlaunch_entry.py → main.py"]
     SM -->|"model.tar.gz (S3)"| L --> ML
     S["sbatch scripts/*.sbatch"] --> M
 ```
@@ -34,10 +34,26 @@ python main.py --base configs/base.yaml --config configs/debug/light_test.yaml -
 pytest -m "not slow and not infra"
 ```
 
-Na AWS, as credenciais vêm das variáveis de ambiente `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY` e `SAGEMAKER_ROLE_ARN`. Com elas definidas, rode `python launch_sagemaker.py --config configs/baselines/baseline_10k.yaml`.
+Para rodar na AWS, as credenciais vêm da cadeia padrão do boto3 (perfil, SSO ou variáveis de ambiente) e a role vem de `SAGEMAKER_ROLE_ARN`:
+
+```bash
+pip install "smlaunch[sagemaker]"
+smlaunch launch --dry-run --var config=configs/baselines/baseline_10k.yaml   # plano + validação, sem custo
+smlaunch launch --var config=configs/baselines/baseline_10k.yaml             # lança, acompanha e baixa
+smlaunch audit && smlaunch cost --tag Project                                # nada esquecido ligado? quanto custou?
+```
 
 Veja o `SAGEMAKER_SLURM_GUIDE.md` para os detalhes de cada ambiente.
 
 ## Créditos
 
-O pacote `DRL_Lei` parte de uma implementação de DRL para VRP de outro autor. <!-- TODO: link do repositório original --> As instâncias e o roteamento por atenção seguem Kool et al. (2019), *Attention, Learn to Solve Routing Problems!*. As camadas quânticas, a infraestrutura de treino e os experimentos são contribuição do autor deste repositório.
+O pacote `DRL_Lei` partiu da implementação de referência de LEI, K. et al. (2022), *Solve routing problems with a residual edge-graph attention neural network* (Neurocomputing, v. 508, p. 79–98; [arXiv:2105.02730](https://arxiv.org/abs/2105.02730); [código original](https://github.com/Lei-Kun/DRL-and-graph-neural-network-for-routing-problems)). O código foi fortemente modificado desde então. As mudanças incluem:
+
+- camadas quânticas híbridas e ansatz PCE;
+- configuração unificada em YAML;
+- trainers PPO e rollout;
+- beam search, critics e avaliação;
+- integração com o MLflow;
+- execução em Slurm e SageMaker.
+
+A geração de instâncias segue Kool et al. (2019), *Attention, Learn to Solve Routing Problems!*.

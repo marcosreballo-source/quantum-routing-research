@@ -1,0 +1,44 @@
+# Lançamento do QGAT no SageMaker com o smlaunch (https://github.com/<usuario>/sagemaker-training-launcher).
+#   smlaunch launch --var config=configs/baselines/baseline_10k.yaml
+#   smlaunch launch --dry-run --var config=configs/ablations/ansatz.yaml
+
+aws:
+  region: us-east-2
+  role_arn: ${SAGEMAKER_ROLE_ARN:-}
+
+job:
+  name_hook: smlaunch_naming:job_name
+  instance_type: ml.g4dn.2xlarge      # 1x T4; ml.g5.2xlarge (A10G) exige limite aprovado
+  max_run_hours: 120
+  framework: pytorch
+  framework_version: "2.1"
+  py_version: py310
+  source_dir: .
+  preflight: ["python", "validate_config.py", "{base}", "{config}"]
+  command: ["python", "main.py", "--base", "{base}", "--config", "{config}"]
+  environment:
+    PYTHONPATH: /opt/ml/code/src
+    RUN_DIR: /opt/ml/output/runs
+    RUN_NAME: sagemaker
+  output_dirs: [/opt/ml/output/runs]
+  tags:
+    Project: "{project}"
+    Squad: "{squad}"
+
+variables:
+  project: bqc
+  squad: qgat
+  base: configs/base.yaml
+  config: configs/debug/light_test.yaml
+
+outputs:
+  dir: ./output
+  collect:
+    checkpoints: "**/*.pt"
+    ".": "**/config.resolved.yaml"
+  mlflow_import: true
+  mlflow_local_dir: ./mlruns
+
+pricing:
+  ml.g4dn.2xlarge: 0.94
+  ml.g5.2xlarge: 1.515
