@@ -9,11 +9,17 @@ Este repositório reúne os projetos de P&D em roteamento de veículos que desen
 
 As instâncias de grafo vêm do [delivery-graph-builder](https://github.com/marcosreballo-source/delivery-graph-builder), que monta a malha viária real a partir de um CD e de pontos de entrega. Os tempos que variam com o horário vêm do [route-time-crawler](https://github.com/marcosreballo-source/route-time-crawler), que coleta tempos de trajeto via Google Routes API com orçamento controlado.
 
+## Apresentação no CBCTQ 2026
+
+![Apresentação dos resultados do QGAT no CBCTQ 2026](docs/cbctq_2026_apresentacao.jpg)
+
+*Apresentação dos resultados do QGAT no Congresso Brasileiro de Ciências e Tecnologias Quânticas (CBCTQ 2026). No slide, a tabela de desempenho em CVRP compara o modelo híbrido (FF-QNN) com o Attention Model clássico e heurísticas (CW, GOT, LKH3, RCW, RSW). Com n = 10 e amostragem, o híbrido teve r̄ de 1,61%, contra 1,83% do Attention Model.*
+
 ## Publicações
 
 | Trabalho | Autores | Onde | Código |
 |---|---|---|---|
-| *A hybrid quantum-classical neural network for learning to route* (2026) | Ritt, da Rosa Júnior, **Reballo**, do Amaral, de Barros | [arXiv:2609.00489](https://arxiv.org/abs/2609.00489), submetido ao CBCTQ 2026 | [`qgat/`](qgat/) |
+| *A hybrid quantum-classical neural network for learning to route* (2026) | Ritt, da Rosa Júnior, **Reballo**, do Amaral, de Barros | [arXiv:2609.00489](https://arxiv.org/abs/2609.00489), apresentado no CBCTQ 2026 | [`qgat/`](qgat/) |
 | *Quantum Approximate Multi-Objective Optimization in Routing Problems* (2026) | Lussi, Fumaco, **Reballo**, Libois Neto, de Barros, Duzzioni | [arXiv:2610.00168](https://arxiv.org/abs/2610.00168) | [`qaoa-multiobjective/`](qaoa-multiobjective/) |
 | *Evaluating Parameter Transfer in FALQON Across Graph Families* (2026) | Fumaco, **Reballo**, de Barros, Thomaz, Duzzioni | 1º Simpósio Brasileiro de Computação e Comunicação Quânticas (SBCCQ), [DOI 10.5753/sbccq.2026.23365](https://doi.org/10.5753/sbccq.2026.23365), [arXiv:2605.29917](https://arxiv.org/abs/2605.29917) | não incluído |
 | *Sparse Walsh-Pauli Correlation Encoding for MaxCut: A Quantum-Inspired Formulation with Quantum-Hardware Validation* (2026) | do Amaral, Legnazzi, **Reballo**, Ritt, da Rosa Júnior, de Barros | [arXiv:2609.08907](https://arxiv.org/abs/2609.08907) | não incluído |
